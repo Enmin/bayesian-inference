@@ -20,7 +20,7 @@ class TestBayesNet(unittest.TestCase):
         inputs = [[0.00059224, 0.0014919]]
         outputs = [(0.284165171, 0.715834828)]
         for i1, i2 in enumerate(inputs):
-            res = trial.normalize(self.net_alarm)
+            res = trial.normalize(i2)
             self.assertAlmostEqual(res[0], outputs[i1][0])
             self.assertAlmostEqual(res[1], outputs[i1][1])
 

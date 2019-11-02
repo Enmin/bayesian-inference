@@ -1,6 +1,7 @@
 import sys, re, copy, itertools, os
 sys.path.append(os.pardir)
-import algorithm.parse
+import algorithm.parse as parse
+
 
 def normalize(dist):
     return tuple(x * 1 / (sum(dist)) for x in dist)
@@ -149,7 +150,7 @@ def enum_ask(net, X, e):
         variables = topoSort(net)
 
             # enumerate
-        dist.append(enum_all(variables, e))
+        dist.append(enum_all(net, variables, e))
 
         # normalize & return
     return normalize(dist)
