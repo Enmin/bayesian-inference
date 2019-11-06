@@ -53,8 +53,8 @@ def genPermutations(length):
         return perms
 
 
-def makeFactor(net, var, factorvars, e):
-    variables = factorvars[var]
+def makeFactor(net, var, factorVars, e):
+    variables = factorVars[var]
     variables.sort()
     allvars = copy.deepcopy(net[var]['parents'])
     allvars.append(var)
