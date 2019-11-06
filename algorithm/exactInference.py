@@ -34,7 +34,7 @@ def queryGiven(net, Y, e):
     return prob
 
 
-def genPermutations(length):
+def generatePermutations(length):
     permutationsmemo = {}
     assert (length >= 0)
     if length in permutationsmemo:
@@ -58,7 +58,7 @@ def makeFactor(net, var, factorVars, e):
     variables.sort()
     allvars = copy.deepcopy(net[var]['parents'])
     allvars.append(var)
-    perms = genPermutations(len(allvars))
+    perms = generatePermutations(len(allvars))
     entries = {}
     asg = {}
     for perm in perms:
@@ -84,7 +84,7 @@ def pointwise(factor1, factor2):
     newvariables = list(set(newvariables))
     newvariables.sort()
 
-    perms = genPermutations(len(newvariables))
+    perms = generatePermutations(len(newvariables))
     newtable = {}
     asg = {}
     for perm in perms:
@@ -195,7 +195,7 @@ def eliminateAsk(net, X, e):
         print('Factors:')
         for factor in factors:
             asg = {}
-            perms = list(genPermutations(len(factor[0])))
+            perms = list(generatePermutations(len(factor[0])))
             perms.sort()
             for perm in perms:
                 for pair in zip(factor[0], perm):
