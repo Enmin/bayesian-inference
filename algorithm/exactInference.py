@@ -1,5 +1,5 @@
-import sys, copy, itertools, os
-sys.path.append(os.pardir)
+import copy
+import itertools
 
 
 def normalize(dist):
@@ -141,37 +141,37 @@ def sumOut(var, factors):
     return factors
 
 
-def enum_ask(net, X, e):
+def enumerateAsk(net, X, e):
     dist = []
     for x in [False, True]:
         e = copy.deepcopy(e)
         e[X] = x
         variables = topoSort(net)
         # enumerate
-        dist.append(enum_all(net, variables, e))
+        dist.append(enumrateAll(net, variables, e))
     return normalize(dist)
 
 
-def enum_all(net, variables, e):
+def enumrateAll(net, variables, e):
     if len(variables) == 0:
         return 1.0
     Y = variables[0]
     if Y in e:
-        ret = queryGiven(net, Y, e) * enum_all(net, variables[1:], e)
+        ret = queryGiven(net, Y, e) * enumrateAll(net, variables[1:], e)
     else:
         probs = []
         e2 = copy.deepcopy(e)
         for y in [True, False]:
             e2[Y] = y
             probs.append(
-                queryGiven(net, Y, e2) * enum_all(net, variables[1:], e2))
+                queryGiven(net, Y, e2) * enumrateAll(net, variables[1:], e2))
         ret = sum(probs)
     print("%-14s | %-20s = %.8f" % (' '.join(variables), ' '.join(
         '%s=%s' % (v, 't' if e[v] else 'f') for v in e), ret))
     return ret
 
 
-def elim_ask(net, X, e):
+def eliminateAsk(net, X, e):
     eliminated = set()
     factors = []
     while len(eliminated) < len(net):
