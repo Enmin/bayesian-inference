@@ -2,7 +2,7 @@ import unittest
 import os
 import sys
 sys.path.append(os.pardir)
-import algorithm.trial as trial
+import algorithm.exactInference as EI
 import algorithm.parse as parse
 
 
@@ -12,25 +12,20 @@ class TestBayesNet(unittest.TestCase):
         self.net_alarm = parse.buildNet(os.path.join('testGraphs', 'alarm.bn'))
         self.net_ex2 = parse.buildNet(os.path.join('testGraphs', 'ex2.bn'))
 
-    def test_parse(self):
-        # func(self)
-        # self.assert...(self, value)
-        pass
-
     def test_normalize0(self):
         inputs = [[0.00059224, 0.0014919]]
         outputs = [(0.284165171, 0.715834828)]
         for i1, i2 in enumerate(inputs):
-            res = trial.normalize(i2)
+            res = EI.normalize(i2)
             self.assertAlmostEqual(res[0], outputs[i1][0])
             self.assertAlmostEqual(res[1], outputs[i1][1])
 
     def test_toposort0(self):
-        res = trial.topoSort(self.net_alarm)
+        res = EI.topoSort(self.net_alarm)
         self.assertEqual(res, ['B', 'E', 'A', 'J', 'M'])
 
     def test_toposort1(self):
-        res = trial.topoSort(self.net_ex2)
+        res = EI.topoSort(self.net_ex2)
         self.assertEqual(res, ['A', 'B', 'C', 'D', 'E'])
 
     def test_querygiven_alarm(self):
@@ -55,7 +50,7 @@ class TestBayesNet(unittest.TestCase):
             'A': False
         }), .99)]
         for i, o in cases:
-            self.assertAlmostEqual(trial.queryGiven(self.net_alarm, *i), o)
+            self.assertAlmostEqual(EI.queryGiven(self.net_alarm, *i), o)
 
     def test_querygiven_ex2(self):
         cases = [(('A', {
@@ -81,12 +76,12 @@ class TestBayesNet(unittest.TestCase):
             'A': False
         }), 0.6)]
         for i, o in cases:
-            self.assertAlmostEqual(trial.queryGiven(self.net_ex2, *i), o)
+            self.assertAlmostEqual(EI.queryGiven(self.net_ex2, *i), o)
 
     def test_genPermutations(self):
         cases = [0, 1, 2, 5]
         for c in cases:
-            res = trial.genPermutations(c)
+            res = EI.genPermutations(c)
             for r in res:
                 self.assertEqual(len(r), c)
             self.assertEqual(len(set(res)), len(res))
@@ -99,7 +94,7 @@ class TestBayesNet(unittest.TestCase):
             (False, True): 0.1,
             (False, False): 0.9
         })
-        self.assertEqual(trial.makeFactor(self.net_ex2, *i), o)
+        self.assertEqual(EI.makeFactor(self.net_ex2, *i), o)
 
     def test_pointwise0(self):
         i1 = (['C', 'E'], {
@@ -124,11 +119,11 @@ class TestBayesNet(unittest.TestCase):
             (True, True, True): 0.5599999999999999,
             (True, False, True): 0.04000000000000001
         })
-        self.assertEqual(trial.pointwise(i1, i2), o)
+        self.assertEqual(EI.pointwise(i1, i2), o)
 
     def test_sumOut0(self):
         self.assertEqual(
-            trial.sumOut('D', [(['A', 'D'], {
+            EI.sumOut('D', [(['A', 'D'], {
                 (True, True): 0.7,
                 (True, False): 0.3,
                 (False, True): 0.1,
@@ -155,14 +150,17 @@ class TestBayesNet(unittest.TestCase):
         }), ('E', {
             'A': True,
             'M': False
+        }), ('B', {
+            'J': True,
+            'M': True
         })]
         outputs = [(0.9931, 0.0069), (0.0001, 0.9999), (0.9893, 0.0107),
-                   (0.9980, 0.0020), (0.7690, 0.2310)]
+                   (0.9980, 0.0020), (0.7690, 0.2310), (0.7158, 0.2842)]
         for i, i1 in enumerate(inputs):
-            res = trial.enum_ask(self.net_alarm, *i1)
+            res = EI.enumerateAsk(self.net_alarm, *i1)
             self.assertEqual(round(res[0] - outputs[i][0], 3), 0)
             self.assertEqual(round(res[1] - outputs[i][1], 3), 0)
-            res = trial.elim_ask(self.net_alarm, *i1)
+            res = EI.eliminateAsk(self.net_alarm, *i1)
             self.assertEqual(round(res[0] - outputs[i][0], 3), 0)
             self.assertEqual(round(res[1] - outputs[i][1], 3), 0)
 
