@@ -81,7 +81,7 @@ class TestBayesNet(unittest.TestCase):
     def test_genPermutations(self):
         cases = [0, 1, 2, 5]
         for c in cases:
-            res = EI.genPermutations(c)
+            res = EI.generatePermutations(c)
             for r in res:
                 self.assertEqual(len(r), c)
             self.assertEqual(len(set(res)), len(res))
